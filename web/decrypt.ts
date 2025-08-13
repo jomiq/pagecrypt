@@ -13,7 +13,11 @@ const msg = find<HTMLParagraphElement>('#msg')
 const form = find<HTMLFormElement>('form')
 const load = find<HTMLDivElement>('#load')
 
-let salt: Uint8Array, iv: Uint8Array, ciphertext: Uint8Array, iterations: number
+let salt: Uint8Array,
+    iv: Uint8Array,
+    ciphertext: Uint8Array,
+    iterations: number,
+    compress: string | undefined
 
 document.addEventListener('DOMContentLoaded', async () => {
     const pl = find<HTMLPreElement>('pre[data-i]')
@@ -23,6 +27,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         return
     }
     iterations = Number(pl.dataset.i)
+    compress = pl.dataset.c
     const bytes = parse(pl.innerText)
     salt = bytes.slice(0, 32)
     iv = bytes.slice(32, 32 + 16)
@@ -97,6 +102,7 @@ async function decrypt() {
         const decrypted = await decryptFile(
             { salt, iv, ciphertext, iterations },
             pwd.value,
+            compress,
         )
 
         document.write(decrypted)
@@ -158,6 +164,7 @@ async function decryptFile(
         iterations: number
     },
     password: string,
+    compress?: string,
 ) {
     const decoder = new TextDecoder()
 
@@ -165,13 +172,26 @@ async function decryptFile(
         ? await importKey(JSON.parse(sessionStorage.k))
         : await deriveKey(salt, password, iterations)
 
-    const data = new Uint8Array(
+    let data = new Uint8Array(
         await subtle.decrypt({ name: 'AES-GCM', iv }, key, ciphertext),
     )
     if (!data) throw 'Malformed data'
+    if (compress == 'gzip') {
+        data = await decompress(data)
+    }
 
     // If no exception were thrown, decryption succeded and we can save the key.
     sessionStorage.k = JSON.stringify(await subtle.exportKey('jwk', key))
 
     return decoder.decode(data)
+}
+
+async function decompress(bytes: Uint8Array<ArrayBuffer>) {
+    const data = new Response(bytes).body!.pipeThrough(
+        new DecompressionStream('gzip'),
+    )
+    if (!data) {
+        throw 'Decompression error'
+    }
+    return await new Response(data).bytes()
 }

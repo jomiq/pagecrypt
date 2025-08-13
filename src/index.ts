@@ -16,6 +16,7 @@ async function encryptFile(
     inputFile: string,
     password: string,
     iterations?: number,
+    compress?: boolean,
 ) {
     let content: string
     try {
@@ -27,7 +28,7 @@ async function encryptFile(
         process.exit(1)
     }
 
-    return await encryptHTML(content, password, iterations)
+    return await encryptHTML(content, password, iterations, compress)
 }
 
 /**
@@ -60,8 +61,14 @@ async function encrypt(
     outputFile: string,
     password: string,
     iterations?: number,
+    compress?: boolean,
 ) {
-    const encrypted = await encryptFile(inputFile, password, iterations)
+    const encrypted = await encryptFile(
+        inputFile,
+        password,
+        iterations,
+        compress,
+    )
     return await saveFile(outputFile, encrypted)
 }
 

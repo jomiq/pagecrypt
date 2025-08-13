@@ -1,9 +1,14 @@
+import { gzip } from 'zlib'
+import { promisify } from 'util'
+
 import { stringify } from './base64'
 
 import crypto from './crypto'
 
 // @ts-expect-error 2307 - Using esbuild to inline this HTML file as a string
 import decryptTemplate from './decrypt-template.html'
+
+const pgzip = promisify(gzip)
 
 /**
  * Encrypt a string and turn it into an encrypted payload.
@@ -17,6 +22,7 @@ async function getEncryptedPayload(
     content: string,
     password: string,
     iterations: number,
+    compress?: boolean,
 ) {
     if (iterations < 2e6) {
         console.warn(
@@ -45,7 +51,7 @@ async function getEncryptedPayload(
         await crypto.subtle.encrypt(
             { name: 'AES-GCM', iv },
             key,
-            encoder.encode(content),
+            compress ? await gzip_content(content) : encoder.encode(content),
         ),
     )
     const totalLength = salt.length + iv.length + ciphertext.length
@@ -70,13 +76,15 @@ export async function encryptHTML(
     inputHTML: string,
     password: string,
     iterations: number = 2e6,
+    compress?: boolean,
 ) {
     return (decryptTemplate as string).replace(
         '<encrypted-payload></encrypted-payload>',
-        `<pre class="hidden" data-i="${iterations.toExponential()}">${await getEncryptedPayload(
+        `<pre class="hidden" ${compress && 'data-c="gzip"'} data-i="${iterations.toExponential()}">${await getEncryptedPayload(
             inputHTML,
             password,
             iterations,
+            compress,
         )}</pre>`,
     )
 }
@@ -120,4 +128,22 @@ function getRandomCharacter(characters: string) {
     } while (randomNumber >= 256 - (256 % characters.length))
 
     return characters[randomNumber % characters.length]
+}
+
+/**
+ * Gzip string data.
+ *
+ * @param {string} content The set of characters to pick from.
+ * @returns uint8 array as BufferSource.
+ */
+async function gzip_content(content: string) {
+    try {
+        const sz = new Blob([content]).size
+        const result = await pgzip(content)
+        console.log(`Compression: ${(100.0 * result.length) / sz}%`)
+        return <BufferSource>result
+    } catch (e) {
+        console.error('❌ Error compressing file: ', e)
+        process.exit(1)
+    }
 }
