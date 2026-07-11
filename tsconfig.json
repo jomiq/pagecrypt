@@ -7,11 +7,11 @@
         "noImplicitAny": false,
         "esModuleInterop": true,
         "allowJs": true,
-        "moduleResolution": "node",
+        "moduleResolution": "bundler",
         "outDir": "dist",
-        "module": "esnext",
         "resolveJsonModule": true,
-        "emitDeclarationOnly": true
+        "emitDeclarationOnly": true,
+        "types": ["node"],
     },
-    "include": ["src/*.ts"]
+    "include": ["src/*.ts"],
 }

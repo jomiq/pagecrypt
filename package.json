@@ -17,15 +17,15 @@
     "author": "Samuel Plumppu",
     "license": "LGPL-3.0-or-later",
     "devDependencies": {
-        "@arethetypeswrong/cli": "^0.18.2",
-        "@types/node": "^25.3.3",
+        "@arethetypeswrong/cli": "^0.18.5",
+        "@types/node": "^26.1.1",
         "html-minifier-terser": "^7.2.0",
-        "prettier": "^3.8.1",
-        "publint": "^0.3.18",
-        "tsdown": "^0.20.3",
-        "typescript": "^5.9.3",
-        "vite": "^7.3.1",
-        "vite-plugin-singlefile": "^2.3.0"
+        "prettier": "^3.9.5",
+        "publint": "^0.3.21",
+        "tsdown": "^0.22.4",
+        "typescript": "^7.0.2",
+        "vite": "^8.1.4",
+        "vite-plugin-singlefile": "^2.3.3"
     },
     "engines": {
         "node": ">= 16.0.0"
