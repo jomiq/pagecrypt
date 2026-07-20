@@ -22,9 +22,9 @@
         "html-minifier-terser": "^7.2.0",
         "prettier": "^3.9.5",
         "publint": "^0.3.21",
-        "tsdown": "^0.22.4",
+        "tsdown": "^0.22.9",
         "typescript": "^7.0.2",
-        "vite": "^8.1.4",
+        "vite": "^8.1.5",
         "vite-plugin-singlefile": "^2.3.3"
     },
     "engines": {
@@ -75,6 +75,7 @@
     "prettier": {
         "semi": false,
         "singleQuote": true,
-        "tabWidth": 4
+        "tabWidth": 4,
+        "printWidth": 100
     }
 }
