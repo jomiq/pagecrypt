@@ -11,7 +11,7 @@
         "format": "prettier --write .",
         "build:lib": "tsdown",
         "dev:web": "vite",
-        "build:web": "vite build && node scripts/postbuild.js",
+        "build:web": "vite build && node scripts/postbuild.ts",
         "preview:web": "vite preview"
     },
     "author": "Samuel Plumppu",
