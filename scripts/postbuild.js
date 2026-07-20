@@ -28,6 +28,7 @@ const fixWhiteSpace = (html) =>
         .replace(/\s+<title>/, '\n    <title>')
         .replace(/<script type="module">/, '  <script type="module">')
         .replace(/\s+<\/script>/, '</script>')
+        .replace(/\/\*\$vite\$\:\d+\*\//, '')
         .replace(/\s+<\/style>/, '</style>')
         .replace(/\n\s+<\/head>/, '\n</head>')
 
