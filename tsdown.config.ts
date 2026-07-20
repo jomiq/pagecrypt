@@ -1,4 +1,4 @@
-import { minify } from 'html-minifier-terser'
+import { minify } from 'html-minifier-next'
 import { defineConfig, type Rolldown } from 'tsdown'
 
 export default defineConfig({
@@ -35,14 +35,15 @@ function minifyHTMLPlugin(): Rolldown.Plugin {
 
 async function minifyHTML(html: string) {
     const minifiedHTML = await minify(html, {
+        removeDefaultTypeAttributes: true,
         removeComments: true,
         removeEmptyAttributes: true,
-        html5: true,
         decodeEntities: true,
         collapseWhitespace: true,
         collapseBooleanAttributes: true,
         removeAttributeQuotes: true,
         removeRedundantAttributes: true,
+        useShortDoctype: true,
     })
     console.log(
         `HTML size reduced by ${Math.round(100 - (minifiedHTML.length / html.length) * 100)}%`,
