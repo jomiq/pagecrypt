@@ -35,9 +35,7 @@ const fixWhiteSpace = (html: string) =>
 /**
  * Run all formatting functions, passing the result forward until we get a final result.
  */
-const applyAllTransformations = (
-    fns: ((input: string) => string)[],
-    initialValue: string,
-) => fns.reduce((prevResult, fn) => fn(prevResult), initialValue)
+const applyAllTransformations = (fns: ((input: string) => string)[], initialValue: string) =>
+    fns.reduce((prevResult, fn) => fn(prevResult), initialValue)
 
 await main()

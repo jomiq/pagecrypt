@@ -45,9 +45,7 @@ async function minifyHTML(html: string) {
         removeRedundantAttributes: true,
     })
     console.log(
-        `HTML size reduced by ${Math.round(
-            100 - (minifiedHTML.length / html.length) * 100,
-        )}%`,
+        `HTML size reduced by ${Math.round(100 - (minifiedHTML.length / html.length) * 100)}%`,
     )
 
     return minifiedHTML

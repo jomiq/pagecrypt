@@ -58,8 +58,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 const subtle =
     window.crypto?.subtle ||
-    (window.crypto as unknown as { webkitSubtle: Crypto['subtle'] })
-        ?.webkitSubtle
+    (window.crypto as unknown as { webkitSubtle: Crypto['subtle'] })?.webkitSubtle
 
 if (!subtle) {
     error('SubtleCrypto is missing')
@@ -97,10 +96,7 @@ async function decrypt() {
     await sleep(60)
 
     try {
-        const decrypted = await decryptFile(
-            { salt, iv, ciphertext, iterations },
-            pwd.value,
-        )
+        const decrypted = await decryptFile({ salt, iv, ciphertext, iterations }, pwd.value)
 
         document.write(decrypted)
         document.close()
@@ -128,13 +124,9 @@ async function deriveKey(
     iterations: number,
 ): Promise<CryptoKey> {
     const encoder = new TextEncoder()
-    const baseKey = await subtle.importKey(
-        'raw',
-        encoder.encode(password),
-        'PBKDF2',
-        false,
-        ['deriveKey'],
-    )
+    const baseKey = await subtle.importKey('raw', encoder.encode(password), 'PBKDF2', false, [
+        'deriveKey',
+    ])
     return await subtle.deriveKey(
         { name: 'PBKDF2', salt, iterations, hash: 'SHA-256' },
         baseKey,
@@ -168,9 +160,7 @@ async function decryptFile(
         ? await importKey(JSON.parse(sessionStorage.k))
         : await deriveKey(salt, password, iterations)
 
-    const data = new Uint8Array(
-        await subtle.decrypt({ name: 'AES-GCM', iv }, key, ciphertext),
-    )
+    const data = new Uint8Array(await subtle.decrypt({ name: 'AES-GCM', iv }, key, ciphertext))
     if (!data) throw 'Malformed data'
 
     // If no exception were thrown, decryption succeded and we can save the key.

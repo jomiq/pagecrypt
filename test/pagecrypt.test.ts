@@ -56,72 +56,52 @@ await Promise.all([
             )
         })
 
-        test(
-            generatePassword.name + ' with specific length',
-            async (t: TestContext) => {
-                t.assert.strictEqual(generatePassword(20).length, 20)
-            },
-        )
+        test(generatePassword.name + ' with specific length', async (t: TestContext) => {
+            t.assert.strictEqual(generatePassword(20).length, 20)
+        })
 
-        test(
-            generatePassword.name + ' with specific characters',
-            async (t: TestContext) => {
-                const characters = 'ab78åäö'
-                const customPassword = generatePassword(20, characters)
-                t.assert.strictEqual(customPassword.length, 20)
-                t.assert.match(
-                    customPassword,
-                    new RegExp(`[${characters}]`),
-                    'only includes allowed characters',
-                )
-                t.assert.doesNotMatch(
-                    customPassword,
-                    new RegExp(`[^${characters}]`),
-                    'does not include other characters',
-                )
-            },
-        )
+        test(generatePassword.name + ' with specific characters', async (t: TestContext) => {
+            const characters = 'ab78åäö'
+            const customPassword = generatePassword(20, characters)
+            t.assert.strictEqual(customPassword.length, 20)
+            t.assert.match(
+                customPassword,
+                new RegExp(`[${characters}]`),
+                'only includes allowed characters',
+            )
+            t.assert.doesNotMatch(
+                customPassword,
+                new RegExp(`[^${characters}]`),
+                'does not include other characters',
+            )
+        })
 
         test(encryptHTML.name, async (t: TestContext) => {
             const generatedPassword = generatePassword(20)
             const encrypted = await encryptHTML(inputHTML, generatedPassword)
             t.assert.match(encrypted, /<pre class="hidden"/g)
             t.assert.ok(
-                encrypted.indexOf('<pre class="hidden"') + 1000 <
-                    encrypted.lastIndexOf('</pre>'),
+                encrypted.indexOf('<pre class="hidden"') + 1000 < encrypted.lastIndexOf('</pre>'),
                 'ensure some encrypted content was added and rather than leaving an empty element',
             )
             await writeFile(jsOutFile2, encrypted)
             JS_API_PASSWORDS[jsOutFile2] = generatedPassword
         })
 
-        test(
-            encryptHTML.name + ' custom iterations',
-            async (t: TestContext) => {
-                const iterations = 2.1e6
-                const withIterations = await encryptHTML(
-                    inputHTML,
-                    TEST_PASSWORD,
-                    iterations,
-                )
-                t.assert.match(
-                    withIterations,
-                    /data-i="[^"]+"/,
-                    'iterations should be added to output HTML',
-                )
-                const outputIterations = (withIterations.match(
-                    /data-i="([^"]+)"/,
-                ) ?? [])[1]
+        test(encryptHTML.name + ' custom iterations', async (t: TestContext) => {
+            const iterations = 2.1e6
+            const withIterations = await encryptHTML(inputHTML, TEST_PASSWORD, iterations)
+            t.assert.match(
+                withIterations,
+                /data-i="[^"]+"/,
+                'iterations should be added to output HTML',
+            )
+            const outputIterations = (withIterations.match(/data-i="([^"]+)"/) ?? [])[1]
 
-                t.assert.strictEqual(
-                    Number(outputIterations),
-                    iterations,
-                    'iterations should match',
-                )
+            t.assert.strictEqual(Number(outputIterations), iterations, 'iterations should match')
 
-                await writeFile(jsOutFile3, withIterations)
-            },
-        )
+            await writeFile(jsOutFile3, withIterations)
+        })
     }),
     suite('pagecrypt CLI', () => {
         Object.entries(CLI_PASSWORDS).map(async ([file, cmd]) => {
@@ -130,11 +110,10 @@ await Promise.all([
 
                 t.assert.strictEqual(stderr.length, 0)
 
-                CLI_PASSWORDS[file as keyof typeof CLI_PASSWORDS] =
-                    stdout.includes('🔑')
-                        ? // When generating passwords with the CLI, capture the output
-                          stdout.split('🔑: ')[1].split('\n')[0]
-                        : TEST_PASSWORD
+                CLI_PASSWORDS[file as keyof typeof CLI_PASSWORDS] = stdout.includes('🔑')
+                    ? // When generating passwords with the CLI, capture the output
+                      stdout.split('🔑: ')[1].split('\n')[0]
+                    : TEST_PASSWORD
             })
         })
     }),
@@ -148,21 +127,14 @@ function writeTestResultsHTMLFile(outputFiles: Record<string, string>) {
             return `
     <div id="${file}">
         <a href="/${file}" target="_blank">${file}</a>
-        ${
-            pwd
-                ? `<button data-pwd="${pwd}">Copy Password</button>`
-                : '<p>Find in the terminal</p>'
-        }
+        ${pwd ? `<button data-pwd="${pwd}">Copy Password</button>` : '<p>Find in the terminal</p>'}
         <a href="/${file}#${pwd}" target="_blank">#</a>
     </div>
 `
         })
         .join('\n' + ' '.repeat(8))
 
-    writeFileSync(
-        resolve('index.html'),
-        indexHTML.replace('<!--TEST-RESULTS-->', results),
-    )
+    writeFileSync(resolve('index.html'), indexHTML.replace('<!--TEST-RESULTS-->', results))
 
     setTimeout(() => {
         console.log(

@@ -12,11 +12,7 @@ import { generatePassword, encryptHTML } from './core'
  * @param iterations The number of iterations to derive the key from the password.
  * @returns A promise that will resolve with the encrypted HTML content
  */
-async function encryptFile(
-    inputFile: string,
-    password: string,
-    iterations?: number,
-) {
+async function encryptFile(inputFile: string, password: string, iterations?: number) {
     let content: string
     try {
         content = await readFile(resolve(process.cwd(), inputFile), 'utf-8')

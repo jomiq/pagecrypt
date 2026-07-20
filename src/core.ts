@@ -12,11 +12,7 @@ import decryptTemplate from './decrypt-template.html'
  * @param iterations The number of iterations to derive the key from the password.
  * @returns an encrypted payload
  */
-async function getEncryptedPayload(
-    content: string,
-    password: string,
-    iterations: number,
-) {
+async function getEncryptedPayload(content: string, password: string, iterations: number) {
     if (iterations < 2e6) {
         console.warn(
             `[pagecrypt] WARNING: The specified number of password iterations (${iterations}) is not secure. If possible, use at least 2_000_000 or more.`,
@@ -41,11 +37,7 @@ async function getEncryptedPayload(
 
     const iv = crypto.getRandomValues(new Uint8Array(16))
     const ciphertext = new Uint8Array(
-        await crypto.subtle.encrypt(
-            { name: 'AES-GCM', iv },
-            key,
-            encoder.encode(content),
-        ),
+        await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, encoder.encode(content)),
     )
     const totalLength = salt.length + iv.length + ciphertext.length
     const mergedData = new Uint8Array(totalLength)
@@ -65,11 +57,7 @@ async function getEncryptedPayload(
  * @param iterations The number of iterations to derive the key from the password.
  * @returns A promise that will resolve with the encrypted HTML content
  */
-export async function encryptHTML(
-    inputHTML: string,
-    password: string,
-    iterations: number = 2e6,
-) {
+export async function encryptHTML(inputHTML: string, password: string, iterations: number = 2e6) {
     return (decryptTemplate as string).replace(
         '<encrypted-payload></encrypted-payload>',
         `<pre class="hidden" data-i="${iterations.toExponential()}">${await getEncryptedPayload(
@@ -94,9 +82,7 @@ export function generatePassword(
     if (characters.length > 255) {
         throw new Error('[pagecrypt] Max character set length is 255')
     }
-    return Array.from({ length }, (_) => getRandomCharacter(characters)).join(
-        '',
-    )
+    return Array.from({ length }, (_) => getRandomCharacter(characters)).join('')
 }
 
 /**

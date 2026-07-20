@@ -2,10 +2,7 @@ import { generatePassword, encryptHTML } from 'pagecrypt/core'
 
 function download(filename, text) {
     const element = document.createElement('a')
-    element.setAttribute(
-        'href',
-        'data:text/html;charset=utf-8,' + encodeURIComponent(text),
-    )
+    element.setAttribute('href', 'data:text/html;charset=utf-8,' + encodeURIComponent(text))
     element.setAttribute('download', filename)
 
     element.style.display = 'none'
@@ -87,12 +84,7 @@ function addBrowserEncrypted(inputHTML, storageKey, filename) {
 async function loadInputHTML(url) {
     return fetch(url)
         .then((res) => res.text())
-        .then((html) =>
-            html.replace(
-                `<script type="module" src="/@vite/client"></script>`,
-                '',
-            ),
-        )
+        .then((html) => html.replace(`<script type="module" src="/@vite/client"></script>`, ''))
 }
 
 async function main() {
