@@ -1,23 +1,18 @@
 import { stringify } from './base64'
-
 import crypto from './crypto'
 
-// @ts-expect-error 2307 - Using esbuild to inline this HTML file as a string
+// @ts-expect-error 2307 - This HTML file is inlined as a string during build
 import decryptTemplate from './decrypt-template.html'
 
 /**
  * Encrypt a string and turn it into an encrypted payload.
  *
- * @param {string} content The data to encrypt
- * @param {string} password The password used to encrypt + decrypt the content.
- * @param {number} iterations The number of iterations to derive the key from the password.
+ * @param content The data to encrypt
+ * @param password The password used to encrypt + decrypt the content.
+ * @param iterations The number of iterations to derive the key from the password.
  * @returns an encrypted payload
  */
-async function getEncryptedPayload(
-    content: string,
-    password: string,
-    iterations: number,
-) {
+async function getEncryptedPayload(content: string, password: string, iterations: number) {
     if (iterations < 2e6) {
         console.warn(
             `[pagecrypt] WARNING: The specified number of password iterations (${iterations}) is not secure. If possible, use at least 2_000_000 or more.`,
@@ -42,11 +37,7 @@ async function getEncryptedPayload(
 
     const iv = crypto.getRandomValues(new Uint8Array(16))
     const ciphertext = new Uint8Array(
-        await crypto.subtle.encrypt(
-            { name: 'AES-GCM', iv },
-            key,
-            encoder.encode(content),
-        ),
+        await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, encoder.encode(content)),
     )
     const totalLength = salt.length + iv.length + ciphertext.length
     const mergedData = new Uint8Array(totalLength)
@@ -61,9 +52,9 @@ async function getEncryptedPayload(
  * Encrypt an HTML string with a given password.
  * The resulting page can be viewed and decrypted by opening the output HTML file in a browser, and entering the correct password.
  *
- * @param {string} inputHTML The HTML string to encrypt.
- * @param {string} password The password used to encrypt + decrypt the content.
- * @param {number} iterations The number of iterations to derive the key from the password.
+ * @param inputHTML The HTML string to encrypt.
+ * @param password The password used to encrypt + decrypt the content.
+ * @param iterations The number of iterations to derive the key from the password.
  * @returns A promise that will resolve with the encrypted HTML content
  */
 export async function encryptHTML(
@@ -85,26 +76,24 @@ export async function encryptHTML(
 /**
  * Generate a random password of a given length.
  *
- * @param {number} length The password length.
- * @param {string} characters The set of characters to pick from. Max length 255 characters.
+ * @param length The password length.
+ * @param characters The set of characters to pick from. Max length 255 characters.
  * @returns A random password.
  */
 export function generatePassword(
-    length = 80,
-    characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
+    length: number = 80,
+    characters: string = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
 ) {
     if (characters.length > 255) {
         throw new Error('[pagecrypt] Max character set length is 255')
     }
-    return Array.from({ length }, (_) => getRandomCharacter(characters)).join(
-        '',
-    )
+    return Array.from({ length }, (_) => getRandomCharacter(characters)).join('')
 }
 
 /**
  * Get a random character from a given set of characters.
  *
- * @param {string} characters The set of characters to pick from.
+ * @param characters The set of characters to pick from.
  * @returns A random character.
  */
 function getRandomCharacter(characters: string) {

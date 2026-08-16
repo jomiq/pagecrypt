@@ -1,10 +1,33 @@
 # Changelog for `pagecrypt`
 
+## 7.1.0 - 2026-03-05
+
+### Features
+
+- 54% smaller package size when unpacked, down from 76.2 kB to 35.2 kB.
+    - Depending on your use case, you usually only import a small part of the library. Despite that, this is still a big improvement.
+
+- Improved build: Replaced `esbuild` with `tsdown` which is based on `rolldown`. This gives several benefits:
+    - Smaller npm package size by reducing duplication in the bundled code.
+    - For local development of the `pagecrypt` library, this makes project maintenance much easier.
+
+- Improved testing to help improve code quality and catch potential regressions:
+    - Added more extensive unit- and integration tests to cover a larger part of the library's public APIs.
+    - Switched from the custom test runner to `node:test`
+
+### Fixes
+
+- Removed unnecessary files that were previously included in the published npm package.
+
+---
+
 ## 7.0.2 - 2025-08-01
 
 ### Fixes
 
 - Improved error message when SubtleCrypto is missing
+
+---
 
 ## 7.0.1 - 2025-07-07
 
@@ -14,11 +37,15 @@
 - Add tests for large 20 MB payload.
 - Maintenance: Simplify browser tests and test results page.
 
+---
+
 ## 7.0.0 - 2025-05-29
 
 - Perform Base64 encoding with modern ECMAScript features to remove dependency `rfc4648`. This reduces the size of `decrypt-template.html` by 16% (-985 bytes), and also makes this library free of runtime dependencies! 🎉
 - Switch license to `LGPL-3.0-or-later`. This is a better choice for a library like pagecrypt.
 - Update dev dependencies to latest versions.
+
+---
 
 ## 6.2.0 - 2025-05-01
 
@@ -35,11 +62,15 @@
 - Improved CLI error handling if arguments are missing.
 - Fix template string to work with new esbuild version.
 
+---
+
 ## 6.1.1 - 2023-07-17
 
 ### Fixes
 
 - Maintenance: Update dev dependencies to latest versions.
+
+---
 
 ## 6.1.0 - 2023-03-24
 
@@ -56,11 +87,15 @@ Two improvements inspired by [Harry Rabin](https://github.com/harryrabin) - than
 - Upgrade dependencies to latest versions.
 - Export TypeScript type definitions in npm package - Thanks to [Bjorn Lu](https://github.com/bluwy) and <https://github.com/bluwy/publint>
 
+---
+
 ## 6.0.1 - 2022-12-31
 
 ### Fixes
 
 - Cleanup README. No code changes.
+
+---
 
 ## 6.0.0 - 2022-12-27
 
@@ -80,6 +115,8 @@ This is a major upgrade, reducing the amount of CSS by 50%, removing about 40% o
 - Prefer `globalThis` over `window` in Node 19 - thanks [@metonym](https://github.com/metonym)
 - Reduce CSS size with 50% by replacing Tailwind CSS with custom CSS. This also greatly simplifies the development and build setup for this project.
 - Update dependencies to latest versions.
+
+---
 
 ## 5.4.0 - 2022-04-18
 

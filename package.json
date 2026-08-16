@@ -1,37 +1,50 @@
 {
     "name": "pagecrypt",
-    "version": "7.0.2",
+    "version": "7.1.0",
     "description": "Easily add client-side password-protection to your Single Page Applications, static websites and HTML files.",
-    "main": "src/index.ts",
     "type": "module",
     "scripts": {
         "test": "cd ./test && pnpm test && cd ..",
-        "test:build": "pnpm build && cd dist && pnpm pack && cd ../test && pnpm i ../dist/pagecrypt-*.tgz && pnpm test && cd ..",
+        "test:build": "pnpm build && pnpm pack && cd ./test && pnpm i ../pagecrypt-*.tgz && pnpm test && cd ..",
         "test:verify": "cd test && pnpm test:verify && cd ..",
         "build": "pnpm build:web && pnpm build:lib",
         "format": "prettier --write .",
-        "build:lib": "node ./scripts/esbuild.js",
+        "build:lib": "tsdown",
         "dev:web": "vite",
-        "build:web": "vite build && node scripts/postbuild.js",
+        "build:web": "vite build && node scripts/postbuild.ts",
         "preview:web": "vite preview"
     },
     "author": "Samuel Plumppu",
     "license": "LGPL-3.0-or-later",
     "devDependencies": {
-        "@types/node": "^24.1.0",
-        "esbuild": "^0.25.8",
-        "html-minifier-terser": "^7.2.0",
-        "prettier": "^3.6.2",
-        "typescript": "^5.9.2",
-        "vite": "^7.0.6",
-        "vite-plugin-singlefile": "^2.3.0"
+        "@arethetypeswrong/cli": "^0.18.5",
+        "@types/node": "^26.1.1",
+        "html-minifier-next": "^7.4.0",
+        "prettier": "^3.9.5",
+        "publint": "^0.3.21",
+        "tsdown": "^0.22.9",
+        "typescript": "^7.0.2",
+        "vite": "^8.1.5",
+        "vite-plugin-singlefile": "^2.3.3"
     },
     "engines": {
         "node": ">= 16.0.0"
     },
     "engineStrict": true,
     "bin": {
-        "pagecrypt": "./src/cli.ts"
+        "pagecrypt": "dist/cli.mjs"
+    },
+    "main": "./dist/index.mjs",
+    "types": "./dist/index.d.mts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.mts",
+            "node": "./dist/index.mjs"
+        },
+        "./core": {
+            "types": "./dist/core.d.mts",
+            "import": "./dist/core.mjs"
+        }
     },
     "keywords": [
         "web-crypto",
@@ -52,20 +65,17 @@
         "type": "git",
         "url": "git+https://github.com/Greenheart/pagecrypt.git"
     },
+    "files": [
+        "dist"
+    ],
     "bugs": {
         "url": "https://github.com/Greenheart/pagecrypt/issues"
     },
     "homepage": "https://github.com/Greenheart/pagecrypt#readme",
-    "private": true,
     "prettier": {
         "semi": false,
         "singleQuote": true,
-        "trailingComma": "all",
-        "tabWidth": 4
-    },
-    "pnpm": {
-        "onlyBuiltDependencies": [
-            "esbuild"
-        ]
+        "tabWidth": 4,
+        "printWidth": 100
     }
 }

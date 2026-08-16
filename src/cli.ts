@@ -51,9 +51,7 @@ async function main() {
     }
 
     const length = generatedLength ? parseInt(generatedLength) : undefined
-    const iterations = passwordIterations
-        ? Number(passwordIterations)
-        : undefined
+    const iterations = passwordIterations ? Number(passwordIterations) : undefined
 
     if (iterations !== undefined && !Number.isInteger(iterations)) {
         console.error('❌: The option --iterations (-i) must be an integer.')
@@ -75,9 +73,7 @@ async function main() {
         console.log(`🔐 Encrypting ${src} → ${dest}`)
         await encrypt(src, dest, password, iterations, comPress)
     } else {
-        console.error(
-            '❌: Either provide a password or use --generate-password <length>',
-        )
+        console.error('❌: Either provide a password or use --generate-password <length>')
         process.exit(1)
     }
 }
